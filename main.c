@@ -80,6 +80,7 @@ int handle_question_entry(u8 *q, u8 *p) {
 
 int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 	char name[255];
+	char admin[255];
 	int i = 0;
 	u16 pref;
 	u8 *startq = q;
@@ -88,6 +89,8 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 	// Answer fields
 	u16 atype,aclass,alen;
 	u32 attl;
+
+	u32 serial, refresh, retry, expire, minttl;
 
 	q += extract_name(q, p, name);
 
@@ -139,6 +142,21 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 			printf("NS: %s\n", name);
 		break;
 
+		case DNS_RECORD_TYPE_SOA:
+			q += extract_name(q, p, name);
+			q += extract_name(q, p, admin);
+
+			serial  = be32(q+0);
+			refresh = be32(q+4);
+			retry   = be32(q+8);
+			expire  = be32(q+12);
+			minttl  = be32(q+16);
+
+			q += 20;
+
+			printf("SOA -- pns: '%s' admin: '%s' serial:%d refresh:%d retry:%d expire:%d minttl:%d\n", name, admin, serial, refresh, retry, expire, minttl);	
+		break;
+
 		default: printf("UNHANDLED RECORD_TYPE: '%02x' (%s)\n", atype, dns_record_type_name[atype]); break;
 	}
 
@@ -156,17 +174,17 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	u32 src_addr, dst_addr;
 	u16 udp_len;
 
-
 	u8 *q;
 	int i, j;
 	char name[255];
 
-
+/*
 	if (strstr(packet+0x36, "audioscrobbler") != NULL)
 		return;
 	
 	if (strstr(packet+0x36, "infostorm") != NULL)
 		return;
+*/
 
 	p += 0x1a; // what hdr?
 
@@ -175,10 +193,12 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	dst_addr = be32(p+4);
 	udp_len  = be16(p+10);
 
+	/*
 	ipv4_to_ascii(src_addr, ip_buf);
 	printf("UDP src: %s\n", ip_buf);
 	ipv4_to_ascii(dst_addr, ip_buf);
 	printf("UDP dst: %s\n", ip_buf);
+	*/
 
 	p += 0x10;	
 
@@ -189,7 +209,7 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	nscount = be16(p+8);
 	arcount = be16(p+10);
 
-	hexdump(packet, header->len);
+	//hexdump(packet, header->len);
 	printf("++ ID: %04x QR: %d OPCODE: %x QCOUNT: %d ANCOUNT: %d ARCOUNT: %d\n", id, 0, 0, qcount, ancount, arcount);
 
 	q = p + 12;
@@ -209,6 +229,8 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	for(i = 0; i < arcount; i++) {
 		q += handle_complex_entry(q, p, DNS_SECTION_ADDITIONAL);
 	}
+
+	printf("\n");
 }
 
 
