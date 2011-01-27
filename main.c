@@ -17,8 +17,8 @@ int extract_name(u8 *b, u8 *p, u8 *out) {
 			break;
 
 		if ((len >> 6) == 3) { // compressed name packet?
-			len &= ~0xc0;
-			len <<= 8;
+			len &= ~0xc0; // clear top 2 bits
+			len <<= 8; 
 			len |= *b++;
 		
 			if (k != 0)
@@ -46,17 +46,59 @@ int extract_name(u8 *b, u8 *p, u8 *out) {
 	return k+1;
 }
 
+void ipv4_to_ascii(u32 ip, u8 *out) {
+	sprintf(out, "%d.%d.%d.%d", 
+		ip >> 24,
+		(ip >> 16)&0xff,
+		(ip >>  8)&0xff,
+		ip & 0xff
+	);
+}
+
 void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet) {
 	u16 id, flags, qcount, ancount, nscount, arcount;
 	u8 *p = packet;
-	int qlen=0;
-	u16 qtype, qclass;
+	char ip_buf[128];
+
+
+	// Question fields
+	u16 qtype, qclass, qlen;
+	u32 qttl;
+	
+	// Answer fields
+	u16 atype,aclass,alen;
+	u32 attl;
+
+	// UDP fields
+	u32 src_addr, dst_addr;
+	u16 udp_len;
+
+	u16 pref;
+
 	u8 *q;
 	int i, j;
 	char name[255];
-	u16 atype,aclass,attl,alen;
 
-	p += 0x2a; // what hdr?
+
+	if (strstr(packet+0x36, "audioscrobbler") != NULL)
+		return;
+	
+	if (strstr(packet+0x36, "infostorm") != NULL)
+		return;
+
+	p += 0x1a; // what hdr?
+
+	// UDP header starts here
+	src_addr = be32(p+0);
+	dst_addr = be32(p+4);
+	udp_len  = be16(p+10);
+
+	ipv4_to_ascii(src_addr, ip_buf);
+	printf("UDP src: %s\n", ip_buf);
+	ipv4_to_ascii(dst_addr, ip_buf);
+	printf("UDP dst: %s\n", ip_buf);
+
+	p += 0x10;	
 
 	id      = be16(p+0);
 	flags   = be16(p+2);
@@ -117,7 +159,14 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 			break;
 
 			case DNS_RECORD_TYPE_MX:
-				
+				pref = be16(q); q += 2;
+				q += extract_name(q, p, name);
+				printf("pref:%d name: %s\n", pref, name);
+			break;
+
+			case DNS_RECORD_TYPE_NS:
+				q += extract_name(q, p, name);
+				printf("NS: %s\n", name);
 			break;
 
 			default: printf("UNHANDLED RECORD_TYPE: '%02x' (%s)\n", atype, dns_record_type_name[atype]); break;
