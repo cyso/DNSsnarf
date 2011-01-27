@@ -1,4 +1,4 @@
-OBJS = main.o
+OBJS = helper.o main.o
 LIBS = -lpcap
 CFLAGS = -ggdb -Wall
 OUTPUT = dns_snarf

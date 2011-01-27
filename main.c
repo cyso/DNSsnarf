@@ -3,52 +3,8 @@
 #include <ctype.h>
 
 #include "types.h"
-
-#define RTYPE_A 1
-
-
-typedef struct {
-	u16 id;
-	u16 flags;
-	u16 qcount;
-	u16 ancount;
-	u16 nscount;
-	u16 arcount;
-} dns_header;
-
-void hexdump(void *ptr, int buflen) {
-	u8 *buf = (u8*)ptr;
-	int i, j;
-
-	for (i=0; i<buflen; i+=16) {
-		printf("%06x: ", i);
-		for (j=0; j<16; j++) 
-			if (i+j < buflen)
-				printf("%02x ", buf[i+j]);
-			else
-				printf("   ");
-
-		printf(" ");
-		for (j=0; j<16; j++) 
-			if (i+j < buflen)
-				printf("%c", isprint(buf[i+j]) ? buf[i+j] : '.');
-
-		printf("\n");
-	}
-}
-
-u16 be16(u8 *p) {
-	return (p[0] << 8) | p[1];
-}
-
-u32 be32(u8 *p) {
-	return (
-		(p[0] << 24) |
-		(p[1] << 16) |
-		(p[2] <<  8) |
-		p[3]
-	);
-}
+#include "dns.h"
+#include "helper.h"
 
 int extract_name(u8 *b, u8 *p, u8 *out) {
 	int len;
@@ -138,7 +94,7 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 		printf("  `-- Answer #%d for '%s' -- type:%04x ttl:%dsec class:%04x len:%04x -- ", i, name, atype, attl, aclass, alen);
 
 		switch(atype) {
-			case RTYPE_A:
+			case 1:
 				printf("IP: %d.%d.%d.%d\n",
 					q[0], q[1], q[2], q[3]
 				);
