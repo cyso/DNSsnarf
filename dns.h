@@ -13,6 +13,8 @@
 #define DNS_RECORD_TYPE_PTR		0x000c
 #define DNS_RECORD_TYPE_MX		0x000f
 
+#define DNS_RECORD_TYPE_AAAA	0x001c
+
 char *dns_record_type_name[0x20]={
 	NULL,
 	"A",

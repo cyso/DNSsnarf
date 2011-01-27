@@ -62,7 +62,7 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	nscount = be16(p+8);
 	arcount = be16(p+10);
 
-	//hexdump(packet, header->len);
+	hexdump(packet, header->len);
 	printf("++ ID: %04x QR: %d OPCODE: %x QCOUNT: %d ANCOUNT: %d ARCOUNT: %d\n", id, 0, 0, qcount, ancount, arcount);
 
 	q = p + 12;
@@ -92,8 +92,15 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 
 		switch(atype) {
 			case DNS_RECORD_TYPE_A:
-				printf("IP: %d.%d.%d.%d\n",
+				printf("IPv4: %d.%d.%d.%d\n",
 					q[0], q[1], q[2], q[3]
+				);
+			break;
+
+			case DNS_RECORD_TYPE_AAAA:
+				printf("IPv6: %04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x\n",
+					be16(q+0), be16(q+2) , be16(q+4 ), be16(q+6),	
+					be16(q+8), be16(q+10), be16(q+12), be16(q+14)
 				);
 			break;
 
