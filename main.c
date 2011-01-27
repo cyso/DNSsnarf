@@ -78,7 +78,7 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 
 		q += 4;
 
-		printf("  `-- Question #%d -- text: '%s' qtype:%04x qclass:%04x\n", i, name, qtype, qclass);
+		printf("  `-- Question #%d -- text: [%s] '%s' qclass:%04x\n", i, dns_record_type_name[qtype], name, qclass);
 	}
 
 	for(i = 0; i < ancount; i++) {
@@ -91,14 +91,13 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	
 		q += 10;
 	
-		printf("  `-- Answer #%d for '%s' -- type:%04x ttl:%dsec class:%04x len:%04x -- ", i, name, atype, attl, aclass, alen);
+		printf("  `-- Answer #%d for [%s] '%s' -- ttl:%dsec class:%04x len:%04x -- ", i, dns_record_type_name[atype], name, attl, aclass, alen);
 
 		switch(atype) {
-			case 1:
+			case DNS_RECORD_TYPE_A:
 				printf("IP: %d.%d.%d.%d\n",
 					q[0], q[1], q[2], q[3]
 				);
-
 			break;
 
 			default: printf("\n"); break;

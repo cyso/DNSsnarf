@@ -13,4 +13,21 @@
 #define DNS_RECORD_TYPE_PTR		0x000c
 #define DNS_RECORD_TYPE_MX		0x000f
 
+char *dns_record_type_name[0x10]={
+	NULL,
+	"A",
+	"NS",
+	"MD",
+	"MF",
+	"CNAME",
+	"SOA",
+	"MB",
+	"MG",
+	"MR",
+	NULL,
+	NULL,
+	"PTR",
+	"MX",
+};
+
 #endif
