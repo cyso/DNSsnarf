@@ -20,10 +20,13 @@ int extract_name(u8 *b, u8 *p, u8 *out) {
 			len &= ~0xc0;
 			len <<= 8;
 			len |= *b++;
+		
+			if (k != 0)
+				*out++ = '.';
 
 			extract_name(p + len, p, out);
 
-			return 2;
+			return k+2;
 		}
 
 
@@ -82,7 +85,7 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 		q += extract_name(q, p, name);
 
 		atype  = be16(q+0);
-		qclass = be16(q+2);
+		aclass = be16(q+2);
 		attl   = be32(q+4);
 		alen   = be16(q+8);
 	
@@ -95,6 +98,8 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 				printf("IPv4: %d.%d.%d.%d\n",
 					q[0], q[1], q[2], q[3]
 				);
+
+				q += 4;
 			break;
 
 			case DNS_RECORD_TYPE_AAAA:
@@ -102,9 +107,20 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 					be16(q+0), be16(q+2) , be16(q+4 ), be16(q+6),	
 					be16(q+8), be16(q+10), be16(q+12), be16(q+14)
 				);
+
+				q += 16;
 			break;
 
-			default: printf("\n"); break;
+			case DNS_RECORD_TYPE_CNAME:
+				q += extract_name(q, p, name);
+				printf("CNAME: '%s'\n", name);
+			break;
+
+			case DNS_RECORD_TYPE_MX:
+				
+			break;
+
+			default: printf("UNHANDLED RECORD_TYPE: '%02x' (%s)\n", atype, dns_record_type_name[atype]); break;
 		}	
 	}
 
