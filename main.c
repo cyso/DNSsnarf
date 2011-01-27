@@ -73,7 +73,7 @@ int handle_question_entry(u8 *q, u8 *p) {
 	q += 4;
 	n += 4;
 
-	printf("  `-- QUESTION   : [%s] (%d) '%s' qclass:%04x\n", dns_record_type_name[qtype], qtype, name, qclass);
+	printf("  `-- QUESTION   : [%5s] (%d) '%s' qclass:%04x\n", dns_record_type_name[qtype], qtype, name, qclass);
 
 	return n;
 }
@@ -107,7 +107,7 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 		case DNS_SECTION_ADDITIONAL: printf("  `-- ADDITIONAL : "); break;
 	}
 	
-	printf("[%s] (%d) '%s' -- ttl:%dsec class:%04x len:%04x -- ", dns_record_type_name[atype], atype, name, attl, aclass, alen);
+	printf("[%5s] (%d) '%s' -- ttl:%dsec class:%04x len:%04x -- ", dns_record_type_name[atype], atype, name, attl, aclass, alen);
 
 	switch(atype) {
 		case DNS_RECORD_TYPE_A:
@@ -140,6 +140,11 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 		case DNS_RECORD_TYPE_NS:
 			q += extract_name(q, p, name);
 			printf("NS: %s\n", name);
+		break;
+
+		case DNS_RECORD_TYPE_PTR:
+			q += extract_name(q, p, name);
+			printf("PTR: %s\n", name);
 		break;
 
 		case DNS_RECORD_TYPE_SOA:
