@@ -10,7 +10,7 @@ int extract_name(u8 *b, u8 *p, u8 *out) {
 	int len;
 	int i, k=0;
 
-	while(k<254) {
+	while(k < 254) {
 		len = *b++;
 
 		if (len == 0)
@@ -20,8 +20,6 @@ int extract_name(u8 *b, u8 *p, u8 *out) {
 			len &= ~0xc0;
 			len <<= 8;
 			len |= *b++;
-
-			//printf("FOUND COMPRESSED REFERENCE, OFFSET: %04x\n", len);
 
 			extract_name(p + len, p, out);
 
@@ -64,7 +62,6 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	nscount = be16(p+8);
 	arcount = be16(p+10);
 
-	//printf("GOT PACKET:\n");
 	//hexdump(packet, header->len);
 	printf("++ ID: %04x QR: %d OPCODE: %x QCOUNT: %d ANCOUNT: %d ARCOUNT: %d\n", id, 0, 0, qcount, ancount, arcount);
 
@@ -78,7 +75,7 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 
 		q += 4;
 
-		printf("  `-- Question #%d -- text: [%s] '%s' qclass:%04x\n", i, dns_record_type_name[qtype], name, qclass);
+		printf("  `-- Question #%d -- text: [%s] (%d) '%s' qclass:%04x\n", i, dns_record_type_name[qtype], qtype, name, qclass);
 	}
 
 	for(i = 0; i < ancount; i++) {
@@ -91,7 +88,7 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	
 		q += 10;
 	
-		printf("  `-- Answer #%d for [%s] '%s' -- ttl:%dsec class:%04x len:%04x -- ", i, dns_record_type_name[atype], name, attl, aclass, alen);
+		printf("  `-- Answer #%d for [%s] (%d) '%s' -- ttl:%dsec class:%04x len:%04x -- ", i, dns_record_type_name[atype], atype, name, attl, aclass, alen);
 
 		switch(atype) {
 			case DNS_RECORD_TYPE_A:

@@ -13,7 +13,7 @@
 #define DNS_RECORD_TYPE_PTR		0x000c
 #define DNS_RECORD_TYPE_MX		0x000f
 
-char *dns_record_type_name[0x10]={
+char *dns_record_type_name[0x20]={
 	NULL,
 	"A",
 	"NS",
@@ -27,7 +27,25 @@ char *dns_record_type_name[0x10]={
 	NULL,
 	NULL,
 	"PTR",
+	"HINFO",
+	"MINFO",
 	"MX",
+	"TXT",
+	"RP",
+	"AFSDB",
+	"X25",
+	"ISDN",
+	"RT",
+	"NSAP",
+	"NSAPPTR",
+	"SIG",
+	"KEY",
+	"PX",
+	"GPOS",
+	"AAAA",
+	"LOC",
+	"NXT",
+	"EID"
 };
 
 #endif
