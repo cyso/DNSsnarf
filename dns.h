@@ -15,6 +15,12 @@
 
 #define DNS_RECORD_TYPE_AAAA	0x001c
 
+
+#define DNS_SECTION_QUESTION   0
+#define DNS_SECTION_ANSWER	   1
+#define DNS_SECTION_AUTHORITY  2
+#define DNS_SECTION_ADDITIONAL 3
+
 char *dns_record_type_name[0x20]={
 	NULL,
 	"A",

@@ -55,25 +55,107 @@ void ipv4_to_ascii(u32 ip, u8 *out) {
 	);
 }
 
+int handle_question_entry(u8 *q, u8 *p) {
+	char name[255];
+	int n = 0;	
+	int i = 0;	
+
+	// Question fields
+	u16 qtype, qclass, qlen;
+	u32 qttl;
+
+	n += extract_name(q, p, name);
+	q += n;
+
+	qtype  = be16(q+0);
+	qclass = be16(q+2);
+
+	q += 4;
+	n += 4;
+
+	printf("  `-- QUESTION   : [%s] (%d) '%s' qclass:%04x\n", dns_record_type_name[qtype], qtype, name, qclass);
+
+	return n;
+}
+
+int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
+	char name[255];
+	int i = 0;
+	u16 pref;
+	u8 *startq = q;
+	int n=0;
+
+	// Answer fields
+	u16 atype,aclass,alen;
+	u32 attl;
+
+	q += extract_name(q, p, name);
+
+	atype  = be16(q+0);
+	aclass = be16(q+2);
+	attl   = be32(q+4);
+	alen   = be16(q+8);
+	
+	q += 10;
+
+	switch(section_no) {
+		case DNS_SECTION_ANSWER    : printf("  `-- ANSWER     : "); break;
+		case DNS_SECTION_AUTHORITY : printf("  `-- AUTHORITY  : "); break;
+		case DNS_SECTION_ADDITIONAL: printf("  `-- ADDITIONAL : "); break;
+	}
+	
+	printf("[%s] (%d) '%s' -- ttl:%dsec class:%04x len:%04x -- ", dns_record_type_name[atype], atype, name, attl, aclass, alen);
+
+	switch(atype) {
+		case DNS_RECORD_TYPE_A:
+			printf("IPv4: %d.%d.%d.%d\n",
+				q[0], q[1], q[2], q[3]
+			);
+			q += 4;
+		break;
+
+		case DNS_RECORD_TYPE_AAAA:
+			printf("IPv6: %04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x\n",
+				be16(q+0), be16(q+2) , be16(q+4 ), be16(q+6),	
+				be16(q+8), be16(q+10), be16(q+12), be16(q+14)
+			);
+
+			q += 16;
+		break;
+
+		case DNS_RECORD_TYPE_CNAME:
+			q += extract_name(q, p, name);
+			printf("CNAME: '%s'\n", name);
+		break;
+
+		case DNS_RECORD_TYPE_MX:
+			pref = be16(q); q += 2;
+			q += extract_name(q, p, name);
+			printf("pref:%d name: %s\n", pref, name);
+		break;
+
+		case DNS_RECORD_TYPE_NS:
+			q += extract_name(q, p, name);
+			printf("NS: %s\n", name);
+		break;
+
+		default: printf("UNHANDLED RECORD_TYPE: '%02x' (%s)\n", atype, dns_record_type_name[atype]); break;
+	}
+
+	n = ((int)q - (int)startq);
+
+	return n;
+}
+
 void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet) {
 	u16 id, flags, qcount, ancount, nscount, arcount;
 	u8 *p = packet;
 	char ip_buf[128];
 
-
-	// Question fields
-	u16 qtype, qclass, qlen;
-	u32 qttl;
-	
-	// Answer fields
-	u16 atype,aclass,alen;
-	u32 attl;
-
 	// UDP fields
 	u32 src_addr, dst_addr;
 	u16 udp_len;
 
-	u16 pref;
 
 	u8 *q;
 	int i, j;
@@ -113,68 +195,19 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	q = p + 12;
 
 	for(i = 0; i < qcount; i++) {
-		q += extract_name(q, p, name);
-
-		qtype  = be16(q+0);
-		qclass = be16(q+2);
-
-		q += 4;
-
-		printf("  `-- Question #%d -- text: [%s] (%d) '%s' qclass:%04x\n", i, dns_record_type_name[qtype], qtype, name, qclass);
+		q += handle_question_entry(q, p);
 	}
 
 	for(i = 0; i < ancount; i++) {
-		q += extract_name(q, p, name);
+		q += handle_complex_entry(q, p, DNS_SECTION_ANSWER);
+	}
 
-		atype  = be16(q+0);
-		aclass = be16(q+2);
-		attl   = be32(q+4);
-		alen   = be16(q+8);
-	
-		q += 10;
-	
-		printf("  `-- Answer #%d for [%s] (%d) '%s' -- ttl:%dsec class:%04x len:%04x -- ", i, dns_record_type_name[atype], atype, name, attl, aclass, alen);
-
-		switch(atype) {
-			case DNS_RECORD_TYPE_A:
-				printf("IPv4: %d.%d.%d.%d\n",
-					q[0], q[1], q[2], q[3]
-				);
-
-				q += 4;
-			break;
-
-			case DNS_RECORD_TYPE_AAAA:
-				printf("IPv6: %04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x\n",
-					be16(q+0), be16(q+2) , be16(q+4 ), be16(q+6),	
-					be16(q+8), be16(q+10), be16(q+12), be16(q+14)
-				);
-
-				q += 16;
-			break;
-
-			case DNS_RECORD_TYPE_CNAME:
-				q += extract_name(q, p, name);
-				printf("CNAME: '%s'\n", name);
-			break;
-
-			case DNS_RECORD_TYPE_MX:
-				pref = be16(q); q += 2;
-				q += extract_name(q, p, name);
-				printf("pref:%d name: %s\n", pref, name);
-			break;
-
-			case DNS_RECORD_TYPE_NS:
-				q += extract_name(q, p, name);
-				printf("NS: %s\n", name);
-			break;
-
-			default: printf("UNHANDLED RECORD_TYPE: '%02x' (%s)\n", atype, dns_record_type_name[atype]); break;
-		}	
+	for(i = 0; i < nscount; i++) {
+		q += handle_complex_entry(q, p, DNS_SECTION_AUTHORITY);
 	}
 
 	for(i = 0; i < arcount; i++) {
-
+		q += handle_complex_entry(q, p, DNS_SECTION_ADDITIONAL);
 	}
 }
 
