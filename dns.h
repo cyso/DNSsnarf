@@ -15,14 +15,14 @@
 
 #define DNS_RECORD_TYPE_AAAA	0x001c
 #define DNS_RECORD_TYPE_SRV		0x0021
-
+#define DNS_RECORD_TYPE_SSHFP	0x002c
 
 #define DNS_SECTION_QUESTION   0
 #define DNS_SECTION_ANSWER	   1
 #define DNS_SECTION_AUTHORITY  2
 #define DNS_SECTION_ADDITIONAL 3
 
-char *dns_record_type_name[0x24]={
+char *dns_record_type_name[0x30]={
 	NULL,
 	"A",
 	"NS",
@@ -59,6 +59,15 @@ char *dns_record_type_name[0x24]={
 	"SRV",
 	"ATMA",
 	"NAPTR",
+	NULL, /* 36 */
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	"SSHFP"
 };
 
 #endif

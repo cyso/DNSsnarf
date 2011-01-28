@@ -84,7 +84,10 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 	char admin[255];
 	u16 pref;
 	u8 *startq = q;
-	int n=0;
+	int n=0, i=0;
+
+	u8 sshfp_algo, sshfp_type;
+	u8 sshfp[20];
 
 	u16 srv_prio, srv_port, srv_unk;
 
@@ -175,6 +178,32 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 			printf("SRV '%s' prio:%d unk:%d port:%d\n", name, srv_prio, srv_unk, srv_port);
 		break;
 
+		case DNS_RECORD_TYPE_SSHFP:
+			sshfp_algo = q[0];
+			sshfp_type = q[1];
+
+			q += 2;
+
+			memcpy(sshfp, q, 20);
+			q += 20;
+			
+			printf("SSHFP ");
+
+			switch(sshfp_algo) {
+				case 0: printf("[reserved] "); break;
+				case 1: printf("[RSA] "); break;
+				case 2: printf("[DSS] "); break;
+
+				default: break;
+			}
+
+			for(i = 0; i < 20; i++)
+				printf("%02x", sshfp[i]);
+
+			printf("\n");
+
+		break;
+
 		default: printf("UNHANDLED RECORD_TYPE: '%02x' (%s)\n", atype, dns_record_type_name[atype]); break;
 	}
 
@@ -200,7 +229,7 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	
 	if (strstr(packet+0x36, "infostorm") != NULL)
 		return;
-	*/
+	*/	
 
 	p += 0x1a; // what hdr?
 
