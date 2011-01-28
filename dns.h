@@ -14,6 +14,7 @@
 #define DNS_RECORD_TYPE_MX		0x000f
 
 #define DNS_RECORD_TYPE_AAAA	0x001c
+#define DNS_RECORD_TYPE_SRV		0x0021
 
 
 #define DNS_SECTION_QUESTION   0
@@ -21,7 +22,7 @@
 #define DNS_SECTION_AUTHORITY  2
 #define DNS_SECTION_ADDITIONAL 3
 
-char *dns_record_type_name[0x20]={
+char *dns_record_type_name[0x24]={
 	NULL,
 	"A",
 	"NS",
@@ -53,7 +54,11 @@ char *dns_record_type_name[0x20]={
 	"AAAA",
 	"LOC",
 	"NXT",
-	"EID"
+	"EID",
+	"NIMLOC",
+	"SRV",
+	"ATMA",
+	"NAPTR",
 };
 
 #endif

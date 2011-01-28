@@ -6,7 +6,7 @@
 #include "dns.h"
 #include "helper.h"
 
-int extract_name(u8 *b, u8 *p, u8 *out) {
+int extract_name(u8 *b, u8 *p, char *out) {
 	int len;
 	int i, k=0;
 
@@ -46,7 +46,7 @@ int extract_name(u8 *b, u8 *p, u8 *out) {
 	return k+1;
 }
 
-void ipv4_to_ascii(u32 ip, u8 *out) {
+void ipv4_to_ascii(u32 ip, char *out) {
 	sprintf(out, "%d.%d.%d.%d", 
 		ip >> 24,
 		(ip >> 16)&0xff,
@@ -58,7 +58,6 @@ void ipv4_to_ascii(u32 ip, u8 *out) {
 int handle_question_entry(u8 *q, u8 *p) {
 	char name[255];
 	int n = 0;	
-	int i = 0;	
 
 	// Question fields
 	u16 qtype, qclass, qlen;
@@ -69,6 +68,8 @@ int handle_question_entry(u8 *q, u8 *p) {
 
 	qtype  = be16(q+0);
 	qclass = be16(q+2);
+	qttl   = be32(q+4);
+	qlen   = be32(q+8);
 
 	q += 4;
 	n += 4;
@@ -81,10 +82,11 @@ int handle_question_entry(u8 *q, u8 *p) {
 int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 	char name[255];
 	char admin[255];
-	int i = 0;
 	u16 pref;
 	u8 *startq = q;
 	int n=0;
+
+	u16 srv_prio, srv_port, srv_unk;
 
 	// Answer fields
 	u16 atype,aclass,alen;
@@ -162,6 +164,17 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 			printf("SOA -- pns: '%s' admin: '%s' serial:%d refresh:%d retry:%d expire:%d minttl:%d\n", name, admin, serial, refresh, retry, expire, minttl);	
 		break;
 
+		case DNS_RECORD_TYPE_SRV:
+			srv_prio = be16(q+0);	
+			srv_unk  = be16(q+2);	
+			srv_port = be16(q+4);	
+
+			q += 6;
+			q += extract_name(q, p, name);
+
+			printf("SRV '%s' prio:%d unk:%d port:%d\n", name, srv_prio, srv_unk, srv_port);
+		break;
+
 		default: printf("UNHANDLED RECORD_TYPE: '%02x' (%s)\n", atype, dns_record_type_name[atype]); break;
 	}
 
@@ -172,24 +185,22 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 
 void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet) {
 	u16 id, flags, qcount, ancount, nscount, arcount;
-	u8 *p = packet;
-	char ip_buf[128];
+	u8 *p = (u8*)packet;
 
 	// UDP fields
 	u32 src_addr, dst_addr;
 	u16 udp_len;
 
 	u8 *q;
-	int i, j;
-	char name[255];
+	int i;
 
-/*
+	/*
 	if (strstr(packet+0x36, "audioscrobbler") != NULL)
 		return;
 	
 	if (strstr(packet+0x36, "infostorm") != NULL)
 		return;
-*/
+	*/
 
 	p += 0x1a; // what hdr?
 
@@ -214,7 +225,6 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	nscount = be16(p+8);
 	arcount = be16(p+10);
 
-	//hexdump(packet, header->len);
 	printf("++ ID: %04x QR: %d OPCODE: %x QCOUNT: %d ANCOUNT: %d ARCOUNT: %d\n", id, 0, 0, qcount, ancount, arcount);
 
 	q = p + 12;
@@ -244,7 +254,6 @@ int main(int argc, char *argv[]) {
 	char   *dev;
 	char   errbuf[PCAP_ERRBUF_SIZE];
 	struct bpf_program fp;
-	struct pcap_pkthdr header;
 
 	bpf_u_int32 mask;
 	bpf_u_int32 net;
