@@ -97,6 +97,7 @@ int handle_question_entry(u8 *q, u8 *p) {
 int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 	char name[255];
 	char admin[255];
+	char txt_body[255];
 	u16 pref;
 	u8 *startq = q;
 	int n=0, i=0;
@@ -108,6 +109,7 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 
 	u16 naptr_order, naptr_prio;
 	char naptr_flags[255], naptr_services[255], naptr_regexp[255], naptr_replace[255];
+	char rp_mbox_name[255], rp_txt_name[255];
 
 	// Answer fields
 	u16 atype,aclass,alen;
@@ -196,6 +198,14 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 			printf("SRV '%s' prio:%d unk:%d port:%d\n", name, srv_prio, srv_unk, srv_port);
 		break;
 
+		case DNS_RECORD_TYPE_RP:
+			q += extract_name(q, p, rp_mbox_name);
+			q += extract_name(q, p, rp_txt_name);
+
+			printf("RP: '%s' -> '%s'\n", rp_mbox_name, rp_txt_name);
+			printf("\n");
+		break;
+
 		case DNS_RECORD_TYPE_NAPTR:
 			naptr_order = be16(q+0);
 			naptr_prio  = be16(q+2);
@@ -208,6 +218,18 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 			q += extract_single(q, naptr_replace);
 
 			printf("NAPTR order:%d prio:%d flags:'%s' services:'%s' regexp:'%s' replace:'%s'\n", naptr_order, naptr_prio, naptr_flags, naptr_services, naptr_regexp, naptr_replace);
+		break;
+		
+		case DNS_RECORD_TYPE_SPF:
+			q += extract_single(q, txt_body);
+
+			printf("SPF: '%s'\n", txt_body);
+		break;
+
+		case DNS_RECORD_TYPE_TXT:
+			q += extract_single(q, txt_body);
+
+			printf("TXT: '%s'\n", txt_body);
 		break;
 
 		case DNS_RECORD_TYPE_SSHFP:
@@ -255,11 +277,13 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	u8 *q;
 	int i;
 
+/*
 	if (strstr(packet+0x36, "audioscrobbler") != NULL)
 		return;
 	
 	if (strstr(packet+0x36, "infostorm") != NULL)
 		return;
+*/
 
 	p += 0x1a; // what hdr?
 
