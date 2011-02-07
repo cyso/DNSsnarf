@@ -1,10 +1,43 @@
 #include <pcap.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <stdint.h>
+#include <string.h>
 
 #include "types.h"
 #include "dns.h"
 #include "helper.h"
+
+uint64_t qcounter[255];
+uint64_t acounter[255];
+
+void init_counters() {
+	int i;
+
+	for(i = 0; i < 255; i++) {
+		qcounter[i] = 0;
+		acounter[i] = 0;
+	}
+}
+
+void dump_counters() {
+	int i;
+
+	fprintf(stderr, "\x1B[2J");
+
+	fprintf(stderr, "QUERY STATS:\n");
+	for(i = 0; i < 255; i++) {
+		if (qcounter[i] != 0)
+			fprintf(stderr, "%5s: [%04X] = 0x%016llx\n", dns_record_type_name[i], i, qcounter[i]);
+	}
+
+	fprintf(stderr, "\nANSWER STATS:\n");
+
+	for(i = 0; i < 255; i++) {
+		if (qcounter[i] != 0)
+			fprintf(stderr, "%5s: [%04X] = 0x%016llx\n", dns_record_type_name[i], i, qcounter[i]);
+	}
+}
 
 int extract_single(u8 *b, char *out) {
 	u8 len;
@@ -88,6 +121,9 @@ int handle_question_entry(u8 *q, u8 *p) {
 
 	q += 4;
 	n += 4;
+	
+	if (qtype >= 0 && qtype < 255)
+		qcounter[qtype]++;
 
 	printf("  `-- QUESTION   : [%5s] (%d) '%s' qclass:%04x\n", dns_record_type_name[qtype], qtype, name, qclass);
 
@@ -133,6 +169,9 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 	}
 	
 	printf("[%5s] (%d) '%s' -- ttl:%dsec class:%04x len:%04x -- ", dns_record_type_name[atype], atype, name, attl, aclass, alen);
+
+	if (atype >= 0 && atype < 255)
+		acounter[atype]++;
 
 	switch(atype) {
 		case DNS_RECORD_TYPE_A:
@@ -293,10 +332,10 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	udp_len  = be16(p+10);
 
 	/*
-	ipv4_to_ascii(src_addr, ip_buf);
-	printf("UDP src: %s\n", ip_buf);
-	ipv4_to_ascii(dst_addr, ip_buf);
-	printf("UDP dst: %s\n", ip_buf);
+x	ipv4_to_ascii(src_addr, ip_buf);
+x	printf("UDP src: %s\n", ip_buf);
+x	ipv4_to_ascii(dst_addr, ip_buf);
+x	printf("UDP dst: %s\n", ip_buf);
 	*/
 
 	p += 0x10;	
@@ -329,6 +368,8 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	}
 
 	printf("\n");
+
+	dump_counters();
 }
 
 
@@ -374,6 +415,8 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "Couldnt install filter %s: %s\n", filter_exp, pcap_geterr(pcap_handle));
 		return -1;
 	}
+
+	init_counters();
 
 	pcap_loop(pcap_handle, -1, handle_packet, NULL);
 	pcap_close(pcap_handle);

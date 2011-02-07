@@ -1,6 +1,6 @@
 OBJS = helper.o main.o
 LIBS = -lpcap
-CFLAGS = -ggdb -Wall
+CFLAGS = -O2 -Wall
 OUTPUT = dns_snarf
 
 main: $(OBJS)
