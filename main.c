@@ -8,8 +8,8 @@
 #include "dns.h"
 #include "helper.h"
 
-uint64_t qcounter[255];
-uint64_t acounter[255];
+uint64_t qcounter[256];
+uint64_t acounter[256];
 
 void init_counters() {
 	int i;
@@ -124,6 +124,8 @@ int handle_question_entry(u8 *q, u8 *p) {
 	
 	if (qtype >= 0 && qtype < 255)
 		qcounter[qtype]++;
+	else
+		qcounter[255]++;
 
 	printf("  `-- QUESTION   : [%5s] (%d) '%s' qclass:%04x\n", dns_record_type_name[qtype], qtype, name, qclass);
 
@@ -172,6 +174,8 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 
 	if (atype >= 0 && atype < 255)
 		acounter[atype]++;
+	else
+		acounter[255]++;
 
 	switch(atype) {
 		case DNS_RECORD_TYPE_A:
