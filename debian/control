@@ -8,5 +8,5 @@ Homepage:
 
 Package: dnssnarf
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, libcap2-bin (>= 2.11)
 Description: DNSsnarf, a DNS statistics gatherer for use with any DNS daemon.

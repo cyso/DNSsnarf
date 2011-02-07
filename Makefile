@@ -9,8 +9,8 @@ CLIENT_OBJS = client.o
 CLIENT_OUTPUT = dns_snarf_client
 
 main: $(OBJS) $(CLIENT_OBJS)
-	gcc -o $(OUTPUT) $(LIBS) $(OBJS)
-	gcc -o $(CLIENT_OUTPUT) $(CLIENT_OBJS)
+	gcc $(CFLAGS) -o $(OUTPUT) $(LIBS) $(OBJS)
+	gcc $(CFLAGS) -o $(CLIENT_OUTPUT) $(CLIENT_OBJS)
 
 cap:
 	setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip' ${OUTPUT}
