@@ -25,3 +25,6 @@ install: main
 uninstall:
 	rm -rf $(DESTDIR)/usr/bin/$(OUTPUT)
 	rm -rf $(DESTDIR)/usr/bin/$(CLIENT_OUTPUT)
+
+package:
+	sudo dpkg-buildpackage -us -uc -tc
