@@ -1,0 +1,29 @@
+This package was debianized by Cyso Development <development@cyso.nl> on
+Mon, 07 Feb 2011 16:48:13 +0100.
+
+Upstream Author(s):
+
+    Peter Geissler <peter.geissler@cyso.nl>
+    Nick Douma <nick.douma@cyso.nl>
+
+Copyright:
+
+    <Copyright (C) 2011 Cyso Managed Hosting>
+
+License:
+
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of the "Artistic License" which comes with Debian.
+
+    THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
+    WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES
+    OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+On Debian systems, the complete text of the Artistic License
+can be found in `/usr/share/common-licenses/Artistic'.
+
+The Debian packaging is (C) 2011, Cyso Development <development@cyso.nl> and
+is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
+
+# Please also look if there are files or directories which have a
+# different copyright/license attached and list them here.
