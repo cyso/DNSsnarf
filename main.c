@@ -105,7 +105,10 @@ void ipv4_to_ascii(u32 ip, char *out) {
 
 int handle_question_entry(u8 *q, u8 *p) {
 	char name[255];
+	char log[64];
 	int n = 0;	
+
+	FILE *fp;
 
 	// Question fields
 	u16 qtype, qclass, qlen;
@@ -126,6 +129,16 @@ int handle_question_entry(u8 *q, u8 *p) {
 		qcounter[qtype]++;
 	else
 		qcounter[255]++;
+
+	if (qtype == 0x0001) {
+		fp = fopen("/opt/dns_stats.txt", "w+");
+
+		if (fp != NULL) {
+			sprintf(log, "0x%016llx", qcounter[1]);
+			fwrite(log, strlen(log), 1, fp);
+			fclose(fp);
+		}
+	}
 
 	printf("  `-- QUESTION   : [%5s] (%d) '%s' qclass:%04x\n", dns_record_type_name[qtype], qtype, name, qclass);
 
