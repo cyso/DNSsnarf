@@ -3,18 +3,34 @@
 #include <ctype.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 
 #include "types.h"
 #include "dns.h"
 #include "helper.h"
+#include "shm.h"
 
+int shmid;
+char *shm = NULL;
+
+uint64_t *qcounter;
+uint64_t *acounter;
+
+/*
 uint64_t qcounter[256];
 uint64_t acounter[256];
+*/
 
 void init_counters() {
 	int i;
 
-	for(i = 0; i < 255; i++) {
+	qcounter = shm+0;
+	acounter = qcounter + 256;
+
+	for(i = 0; i < 256; i++) {
 		qcounter[i] = 0;
 		acounter[i] = 0;
 	}
@@ -34,8 +50,8 @@ void dump_counters() {
 	fprintf(stderr, "\nANSWER STATS:\n");
 
 	for(i = 0; i < 255; i++) {
-		if (qcounter[i] != 0)
-			fprintf(stderr, "%5s: [%04X] = 0x%016llx\n", dns_record_type_name[i], i, qcounter[i]);
+		if (acounter[i] != 0)
+			fprintf(stderr, "%5s: [%04X] = 0x%016llx\n", dns_record_type_name[i], i, acounter[i]);
 	}
 }
 
@@ -431,6 +447,18 @@ int main(int argc, char *argv[]) {
 	if (pcap_setfilter(pcap_handle, &fp) == -1) {
 		fprintf(stderr, "Couldnt install filter %s: %s\n", filter_exp, pcap_geterr(pcap_handle));
 		return -1;
+	}
+
+
+	// Register shared memory object
+	if ((shmid = shmget(SHM_KEY, sizeof(uint64_t)*256*2, IPC_CREAT | 0666)) < 0) {
+		perror("shmget");
+		exit(1);
+	}
+
+	if ((shm = shmat(shmid, NULL, 0)) == (char*)(-1)) {
+		perror("shmat");
+		exit(1);
 	}
 
 	init_counters();
