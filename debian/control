@@ -1,0 +1,12 @@
+Source: dnssnarf
+Section: net
+Priority: extra
+Maintainer: Cyso Development <development@cyso.nl>
+Build-Depends: debhelper (>= 7), libpcap0.8-dev (>= 0.9.8), libcap2-bin (>= 2.11)
+Standards-Version: 3.7.3
+Homepage: 
+
+Package: dnssnarf
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: DNSsnarf, a DNS statistics gatherer for use with any DNS daemon.
