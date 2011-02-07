@@ -95,9 +95,6 @@ int main(int argc, char *argv[]) {
 	qcounter = shm+0;
 	acounter = (qcounter + 256);
 
-	printf("qcounter @ %p\n", qcounter);
-	printf("acounter @ %p\n", acounter);
-
 	// dump requested counter to stdout as asciihex
 	if (rec_dir == 0)
 		printf("%llx\n", qcounter[rec_idx]);
