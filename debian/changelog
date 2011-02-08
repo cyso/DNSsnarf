@@ -1,6 +1,6 @@
-dnssnarf (1.1~5.gbpdd20ca) stable; urgency=low
+dnssnarf (1.1~6.gbpcd3b79) stable; urgency=low
 
-  ** SNAPSHOT build @dd20ca6171cad10e0d96bcc313fdd1b93c4f111d **
+  ** SNAPSHOT build @cd3b79f5d820795f673c65f6919b6f490e6482eb **
 
   git-buildpackage.
 
@@ -59,8 +59,9 @@ dnssnarf (1.1~5.gbpdd20ca) stable; urgency=low
 
   [ Nick Douma ]
   * Exclude .git directory from source package and remove example files
+  * Lower init.d timeout on stop
 
- -- Nick Douma <nick.douma@cyso.nl>  Tue, 08 Feb 2011 15:28:15 +0100
+ -- Nick Douma <nick.douma@cyso.nl>  Tue, 08 Feb 2011 15:37:08 +0100
 
 dnssnarf (1.0) unstable; urgency=low
 
