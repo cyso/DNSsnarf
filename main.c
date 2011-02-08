@@ -22,6 +22,11 @@ char *shm = NULL;
 uint64_t *qcounter;
 uint64_t *acounter;
 
+#ifdef DEBUG
+	#define DPRINTF(s)  do { printf s; } while (0)
+#else
+	#define DPRINTF(s)  do {} while(0)
+#endif
 
 void exit_handler(int sig) {
 	openlog("dnssnarf", LOG_PERROR, LOG_DAEMON);
@@ -163,7 +168,7 @@ int handle_question_entry(u8 *q, u8 *p) {
 		}
 	}
 
-	printf("  `-- QUESTION   : [%5s] (%d) '%s' qclass:%04x\n", dns_record_type_name[qtype], qtype, name, qclass);
+	DPRINTF(("  `-- QUESTION   : [%5s] (%d) '%s' qclass:%04x\n", dns_record_type_name[qtype], qtype, name, qclass));
 
 	return n;
 }
@@ -201,12 +206,12 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 	q += 10;
 
 	switch(section_no) {
-		case DNS_SECTION_ANSWER    : printf("  `-- ANSWER     : "); break;
-		case DNS_SECTION_AUTHORITY : printf("  `-- AUTHORITY  : "); break;
-		case DNS_SECTION_ADDITIONAL: printf("  `-- ADDITIONAL : "); break;
+		case DNS_SECTION_ANSWER    : DPRINTF(("  `-- ANSWER     : ")); break;
+		case DNS_SECTION_AUTHORITY : DPRINTF(("  `-- AUTHORITY  : ")); break;
+		case DNS_SECTION_ADDITIONAL: DPRINTF(("  `-- ADDITIONAL : ")); break;
 	}
 	
-	printf("[%5s] (%d) '%s' -- ttl:%dsec class:%04x len:%04x -- ", dns_record_type_name[atype], atype, name, attl, aclass, alen);
+	DPRINTF(("[%5s] (%d) '%s' -- ttl:%dsec class:%04x len:%04x -- ", dns_record_type_name[atype], atype, name, attl, aclass, alen));
 
 	if (atype >= 0 && atype < 255)
 		acounter[atype]++;
@@ -215,40 +220,40 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 
 	switch(atype) {
 		case DNS_RECORD_TYPE_A:
-			printf("IPv4: %d.%d.%d.%d\n",
+			DPRINTF(("IPv4: %d.%d.%d.%d\n",
 				q[0], q[1], q[2], q[3]
-			);
+			));
 			q += 4;
 		break;
 
 		case DNS_RECORD_TYPE_AAAA:
-			printf("IPv6: %04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x\n",
+			DPRINTF(("IPv6: %04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x\n",
 				be16(q+0), be16(q+2) , be16(q+4 ), be16(q+6),	
 				be16(q+8), be16(q+10), be16(q+12), be16(q+14)
-			);
+			));
 
 			q += 16;
 		break;
 
 		case DNS_RECORD_TYPE_CNAME:
 			q += extract_name(q, p, name);
-			printf("CNAME: '%s'\n", name);
+			DPRINTF(("CNAME: '%s'\n", name));
 		break;
 
 		case DNS_RECORD_TYPE_MX:
 			pref = be16(q); q += 2;
 			q += extract_name(q, p, name);
-			printf("pref:%d name: %s\n", pref, name);
+			DPRINTF(("pref:%d name: %s\n", pref, name));
 		break;
 
 		case DNS_RECORD_TYPE_NS:
 			q += extract_name(q, p, name);
-			printf("NS: %s\n", name);
+			DPRINTF(("NS: %s\n", name));
 		break;
 
 		case DNS_RECORD_TYPE_PTR:
 			q += extract_name(q, p, name);
-			printf("PTR: %s\n", name);
+			DPRINTF(("PTR: %s\n", name));
 		break;
 
 		case DNS_RECORD_TYPE_SOA:
@@ -263,7 +268,7 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 
 			q += 20;
 
-			printf("SOA -- pns: '%s' admin: '%s' serial:%d refresh:%d retry:%d expire:%d minttl:%d\n", name, admin, serial, refresh, retry, expire, minttl);	
+			DPRINTF(("SOA -- pns: '%s' admin: '%s' serial:%d refresh:%d retry:%d expire:%d minttl:%d\n", name, admin, serial, refresh, retry, expire, minttl));
 		break;
 
 		case DNS_RECORD_TYPE_SRV:
@@ -274,15 +279,14 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 			q += 6;
 			q += extract_name(q, p, name);
 
-			printf("SRV '%s' prio:%d unk:%d port:%d\n", name, srv_prio, srv_unk, srv_port);
+			DPRINTF(("SRV '%s' prio:%d unk:%d port:%d\n", name, srv_prio, srv_unk, srv_port));
 		break;
 
 		case DNS_RECORD_TYPE_RP:
 			q += extract_name(q, p, rp_mbox_name);
 			q += extract_name(q, p, rp_txt_name);
 
-			printf("RP: '%s' -> '%s'\n", rp_mbox_name, rp_txt_name);
-			printf("\n");
+			DPRINTF(("RP: '%s' -> '%s'\n\n", rp_mbox_name, rp_txt_name));
 		break;
 
 		case DNS_RECORD_TYPE_NAPTR:
@@ -296,19 +300,19 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 			q += extract_single(q, naptr_regexp);
 			q += extract_single(q, naptr_replace);
 
-			printf("NAPTR order:%d prio:%d flags:'%s' services:'%s' regexp:'%s' replace:'%s'\n", naptr_order, naptr_prio, naptr_flags, naptr_services, naptr_regexp, naptr_replace);
+			DPRINTF(("NAPTR order:%d prio:%d flags:'%s' services:'%s' regexp:'%s' replace:'%s'\n", naptr_order, naptr_prio, naptr_flags, naptr_services, naptr_regexp, naptr_replace));
 		break;
 		
 		case DNS_RECORD_TYPE_SPF:
 			q += extract_single(q, txt_body);
 
-			printf("SPF: '%s'\n", txt_body);
+			DPRINTF(("SPF: '%s'\n", txt_body));
 		break;
 
 		case DNS_RECORD_TYPE_TXT:
 			q += extract_single(q, txt_body);
 
-			printf("TXT: '%s'\n", txt_body);
+			DPRINTF(("TXT: '%s'\n", txt_body));
 		break;
 
 		case DNS_RECORD_TYPE_SSHFP:
@@ -320,24 +324,24 @@ int handle_complex_entry(u8 *q, u8 *p, u8 section_no) {
 			memcpy(sshfp, q, 20);
 			q += 20;
 			
-			printf("SSHFP ");
+			DPRINTF(("SSHFP "));
 
 			switch(sshfp_algo) {
-				case 0: printf("[reserved] "); break;
-				case 1: printf("[RSA] "); break;
-				case 2: printf("[DSS] "); break;
+				case 0: DPRINTF(("[reserved] ")); break;
+				case 1: DPRINTF(("[RSA] ")); break;
+				case 2: DPRINTF(("[DSS] ")); break;
 
 				default: break;
 			}
 
 			for(i = 0; i < 20; i++)
-				printf("%02x", sshfp[i]);
+				DPRINTF(("%02x", sshfp[i]));
 
-			printf("\n");
+			DPRINTF(("\n"));
 
 		break;
 
-		default: printf("UNHANDLED RECORD_TYPE: '%02x' (%s)\n", atype, dns_record_type_name[atype]); break;
+		default: DPRINTF(("UNHANDLED RECORD_TYPE: '%02x' (%s)\n", atype, dns_record_type_name[atype])); break;
 	}
 
 	n = ((int)q - (int)startq);
@@ -379,7 +383,7 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	nscount = be16(p+8);
 	arcount = be16(p+10);
 
-	printf("++ ID: %04x QR: %d OPCODE: %x QCOUNT: %d ANCOUNT: %d ARCOUNT: %d\n", id, 0, 0, qcount, ancount, arcount);
+	DPRINTF(("++ ID: %04x QR: %d OPCODE: %x QCOUNT: %d ANCOUNT: %d ARCOUNT: %d\n", id, 0, 0, qcount, ancount, arcount));
 
 	q = p + 12;
 
@@ -399,9 +403,11 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 		q += handle_complex_entry(q, p, DNS_SECTION_ADDITIONAL);
 	}
 
-	printf("\n");
+	DPRINTF(("\n"));
 
-	//dump_counters();
+#ifdef DEBUG
+	dump_counters();
+#endif
 }
 
 
