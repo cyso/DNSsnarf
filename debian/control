@@ -8,5 +8,26 @@ Homepage:
 
 Package: dnssnarf
 Architecture: any
-Depends: ${shlibs:Depends}, libcap2-bin (>= 2.11)
-Description: DNSsnarf, a DNS statistics gatherer for use with any DNS daemon.
+Depends: ${shlibs:Depends}, libcap2-bin (>= 2.11), lsb-base (>= 3.0-6)
+Description: Gathers DNS statistics by snarfing packets
+ Counts all incoming (queries) and outgoing (answers) UDP DNS packets, and 
+ groups them by DNS record type:
+ .
+  * A
+  * NS
+  * MD
+  * MF
+  * CNAME
+  * SOA
+  * MB
+  * MG
+  * MR
+  * PTR
+  * MX
+  * TXT
+  * AAAA
+  * SRV
+  * SSHFP
+  * NAPTR
+  * RP
+  * SPF

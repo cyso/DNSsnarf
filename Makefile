@@ -1,12 +1,12 @@
 OBJS = helper.o main.o
 LIBS = -lpcap
 CFLAGS = -O2 -Wall
-OUTPUT = dns_snarf
+OUTPUT = dnssnarf
 ifndef $(DESTDIR)
 DESTDIR = ""
 endif
 CLIENT_OBJS = client.o
-CLIENT_OUTPUT = dns_snarf_client
+CLIENT_OUTPUT = dnssnarfclient
 
 main: $(OBJS) $(CLIENT_OBJS)
 	gcc $(CFLAGS) -o $(OUTPUT) $(LIBS) $(OBJS)

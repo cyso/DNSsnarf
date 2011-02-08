@@ -20,7 +20,7 @@ set -e
 
 case "$1" in
     configure)
-    	setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip' /usr/bin/dns_snarf
+        setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip' /usr/bin/dnssnarf
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

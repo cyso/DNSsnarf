@@ -1,5 +1,7 @@
-dnssnarf (1.1~2.gbp2b2198) stable; urgency=low
-  Automatic debian package generation and changelog generation using
+dnssnarf (1.1~4.gbp536d8d) stable; urgency=low
+
+  ** SNAPSHOT build @536d8d9b5c69929cbc7118cce9df1f58a1d33928 **
+
   git-buildpackage.
 
   ** SNAPSHOT build @2b219884ac334dcf8d85762bb028596016d19bde **
@@ -41,8 +43,11 @@ dnssnarf (1.1~2.gbp2b2198) stable; urgency=low
   * Fix Makefile to use $CFLAGS and add libcap2-bin dependency
   * Add package building target
   * Add changelog generation target
+  * Add changelog generation target
+  * Add init.d initialization scripts
+  * Make the package more Debian-compliant
 
- -- Nick Douma <nick.douma@cyso.nl>  Tue, 08 Feb 2011 12:17:14 +0100
+ -- Nick Douma <nick.douma@cyso.nl>  Tue, 08 Feb 2011 14:40:21 +0100
 
 dnssnarf (1.0) unstable; urgency=low
 
