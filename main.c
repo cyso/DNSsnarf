@@ -9,6 +9,7 @@
 #include <sys/shm.h>
 #include <syslog.h>
 #include <signal.h>
+#include <unistd.h>
 
 #include "types.h"
 #include "dns.h"
@@ -400,7 +401,7 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 
 	printf("\n");
 
-	dump_counters();
+	//dump_counters();
 }
 
 
@@ -409,11 +410,26 @@ int main(int argc, char *argv[]) {
 	char   *dev;
 	char   errbuf[PCAP_ERRBUF_SIZE];
 	struct bpf_program fp;
-
+	pid_t pid;
+	
 	bpf_u_int32 mask;
 	bpf_u_int32 net;
 	
 	char filter_exp[] = "udp port 53";
+
+	if (getppid() == 1) return 0;
+
+	pid = fork();
+
+	if (pid < 0) {
+		fprintf(stderr, "Unable to fork()\n");
+		exit(-1);
+	}
+
+	if (pid > 0) {
+		printf("Exitting parent..\n");
+		exit(0);
+	}
 
 	openlog("dnssnarf", LOG_PERROR, LOG_DAEMON);
 	syslog(LOG_INFO, "started.");
