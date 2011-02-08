@@ -7,6 +7,8 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <syslog.h>
+#include <signal.h>
 
 #include "types.h"
 #include "dns.h"
@@ -19,15 +21,19 @@ char *shm = NULL;
 uint64_t *qcounter;
 uint64_t *acounter;
 
-/*
-uint64_t qcounter[256];
-uint64_t acounter[256];
-*/
+
+void exit_handler(int sig) {
+	openlog("dnssnarf", LOG_PERROR, LOG_DAEMON);
+	syslog(LOG_INFO, "killed by signal 0x%x.", sig);
+	closelog();
+
+	exit(0);
+}
 
 void init_counters() {
 	int i;
 
-	qcounter = shm+0;
+	qcounter = (uint64_t*)shm;
 	acounter = qcounter + 256;
 
 	for(i = 0; i < 256; i++) {
@@ -349,14 +355,6 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	u8 *q;
 	int i;
 
-/*
-	if (strstr(packet+0x36, "audioscrobbler") != NULL)
-		return;
-	
-	if (strstr(packet+0x36, "infostorm") != NULL)
-		return;
-*/
-
 	p += 0x1a; // what hdr?
 
 	// UDP header starts here
@@ -365,10 +363,10 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	udp_len  = be16(p+10);
 
 	/*
-x	ipv4_to_ascii(src_addr, ip_buf);
-x	printf("UDP src: %s\n", ip_buf);
-x	ipv4_to_ascii(dst_addr, ip_buf);
-x	printf("UDP dst: %s\n", ip_buf);
+	ipv4_to_ascii(src_addr, ip_buf);
+	printf("UDP src: %s\n", ip_buf);
+	ipv4_to_ascii(dst_addr, ip_buf);
+	printf("UDP dst: %s\n", ip_buf);
 	*/
 
 	p += 0x10;	
@@ -416,6 +414,13 @@ int main(int argc, char *argv[]) {
 	bpf_u_int32 net;
 	
 	char filter_exp[] = "udp port 53";
+
+	openlog("dnssnarf", LOG_PERROR, LOG_DAEMON);
+	syslog(LOG_INFO, "started.");
+	closelog();
+
+	signal(SIGINT , exit_handler);
+	signal(SIGKILL, exit_handler);
 
 	dev = pcap_lookupdev(errbuf);
 
