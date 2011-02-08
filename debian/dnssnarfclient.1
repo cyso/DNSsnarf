@@ -1,0 +1,43 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH DNSSNARFCLIENT 1 "February  8, 2011"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+dnssnarfclient \- a tools to read statistics from DNSsnarf
+.SH SYNOPSIS
+.B dnssnarfclient
+recordtype query|answer
+.SH DESCRIPTION
+This manual page documents briefly the
+.B dnssnarfclient
+command and its options.
+.PP
+dnssnarfclient connects with a running dnssnarf daemon, using shared memory. It can then
+report statistics about DNS record types, and how many times a request has been received
+and processed for a specific type since the start of the dnssnarf daemon.
+.TP
+.B recordtype
+Type of DNS record to receive statistics for. Can be any of:
+.TP
+.B query|answer
+Choose either: query = count of incoming packets, answer = count of outgoing packets.
+.SH SEE ALSO
+.BR dnssnarf (1),
+.br
+.SH AUTHOR
+dnssnarf was written by Peter Geissler <peter.geissler@cyso.nl> and Nick Douma <nick.douma@cyso.nl>
+.PP
+This manual page was written by Nick Douma <nick.douma@cyso.nl> for the Debian project (but may be used by others).

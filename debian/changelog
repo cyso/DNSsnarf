@@ -1,6 +1,4 @@
-dnssnarf (1.1~6.gbpcd3b79) stable; urgency=low
-
-  ** SNAPSHOT build @cd3b79f5d820795f673c65f6919b6f490e6482eb **
+dnssnarf (1.1) stable; urgency=low
 
   git-buildpackage.
 
@@ -60,8 +58,9 @@ dnssnarf (1.1~6.gbpcd3b79) stable; urgency=low
   [ Nick Douma ]
   * Exclude .git directory from source package and remove example files
   * Lower init.d timeout on stop
+  * Add man-pages and use fakeroot for package building
 
- -- Nick Douma <nick.douma@cyso.nl>  Tue, 08 Feb 2011 15:37:08 +0100
+ -- Nick Douma <nick.douma@cyso.nl>  Tue, 08 Feb 2011 17:06:11 +0100
 
 dnssnarf (1.0) unstable; urgency=low
 

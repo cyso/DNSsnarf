@@ -99,7 +99,7 @@ binary-common:
 	dh_installinit --restart-after-upgrade
 #	dh_installcron
 #	dh_installinfo
-	dh_installman
+	dh_installman debian/dnssnarf.1 debian/dnssnarfclient.1
 	dh_link
 	dh_strip
 	dh_compress

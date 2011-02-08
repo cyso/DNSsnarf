@@ -27,7 +27,7 @@ uninstall:
 	rm -rf $(DESTDIR)/usr/bin/$(CLIENT_OUTPUT)
 
 package:
-	sudo dpkg-buildpackage -us -uc -tc -I.git
+	dpkg-buildpackage -rfakeroot -us -uc -tc -I.git
 
 changelog:
 	git dch --debian-branch=master --snapshot --auto
