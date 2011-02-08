@@ -1,6 +1,6 @@
-dnssnarf (1.1~4.gbp536d8d) stable; urgency=low
+dnssnarf (1.1~5.gbpdd20ca) stable; urgency=low
 
-  ** SNAPSHOT build @536d8d9b5c69929cbc7118cce9df1f58a1d33928 **
+  ** SNAPSHOT build @dd20ca6171cad10e0d96bcc313fdd1b93c4f111d **
 
   git-buildpackage.
 
@@ -47,7 +47,20 @@ dnssnarf (1.1~4.gbp536d8d) stable; urgency=low
   * Add init.d initialization scripts
   * Make the package more Debian-compliant
 
- -- Nick Douma <nick.douma@cyso.nl>  Tue, 08 Feb 2011 14:40:21 +0100
+  [ peter ]
+  * Fix stupid client warnings
+  * Implemented basic syslog logging (to daemon facility) and added a
+    SIGINT/SIGKILL handler
+
+  [ peter ]
+  * Add proccess forking
+  * Sprinkle everything with DPRINTF macro rather than actual printfs,
+    allows to easily turn on/off spew using a compiler define.
+
+  [ Nick Douma ]
+  * Exclude .git directory from source package and remove example files
+
+ -- Nick Douma <nick.douma@cyso.nl>  Tue, 08 Feb 2011 15:28:15 +0100
 
 dnssnarf (1.0) unstable; urgency=low
 

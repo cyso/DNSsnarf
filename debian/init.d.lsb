@@ -15,7 +15,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="DNSsnarf DNS statistics gatherer"
 NAME=dnssnarf
 DAEMON=/usr/bin/$NAME
-DAEMON_ARGS="--options args"
+DAEMON_ARGS="-d"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
@@ -34,7 +34,8 @@ SCRIPTNAME=/etc/init.d/$NAME
 
 # Check if user is root
 if [[ $EUID -ne 0 ]]; then
-	echo -e "Could not start, must be run as root\n" 1>&2
+	echo -n $DESC
+	echo ": could not start, must be run as root" 1>&2
 	exit 2
 fi
 
