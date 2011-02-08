@@ -46,7 +46,7 @@ void usage(char *prog) {
 
 int main(int argc, char *argv[]) {
 	int shmid, i, rec_idx=-1, rec_dir=-1;
-	char *shm, *s;
+	char *shm;
 
 	// check no. of params
 	if (argc != 3) {
@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// initialize counter pointers within shm object
-	qcounter = shm+0;
+	qcounter = (uint64_t*)shm;
 	acounter = (qcounter + 256);
 
 	// dump requested counter to stdout as asciihex
