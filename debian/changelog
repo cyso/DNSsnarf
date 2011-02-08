@@ -1,3 +1,54 @@
+dnssnarf (1.1~4.gbp536d8d) stable; urgency=low
+
+  ** SNAPSHOT build @536d8d9b5c69929cbc7118cce9df1f58a1d33928 **
+
+  git-buildpackage.
+
+  ** SNAPSHOT build @2b219884ac334dcf8d85762bb028596016d19bde **
+
+  [ peter ]
+  * Add some DNS record type defines
+  * Moved some helper routines to separate sourcefile
+  * Add very basic record type decoding
+  * Add more record types
+  * Decode AAAA packets
+  * Fix some critical bugs in packet parsing, multiple answers and CNAME
+    should work now. :)
+  * Add support for MX and NS
+  * Split up packet parsing, added support for parsing authority and
+    additional sections
+  * Added SOA parsing
+  * Add PTR support, prettify some output
+  * Fix SRV support, fix compiler warnings
+  * Added SSHFP record support
+  * Add NAPTR support
+  * Add support for RP, SPF and TXT
+  * Add query/answer counters
+  * Add counters for 'other' queries/answers
+  * Test file logging for # of A records
+
+  [ Nick Douma ]
+  * Added setcap to Makefile
+
+  [ peter ]
+  * Put counters in shared memory object
+  * Implemented simple CLI client to dump counters from shared memory
+  * Add makefile rule to build client
+  * Remove debug crud
+  * Add install and uninstall targets
+
+  [ Nick Douma ]
+  * Add Debian package control files
+  * Clean up Makefile
+  * Fix Makefile to use $CFLAGS and add libcap2-bin dependency
+  * Add package building target
+  * Add changelog generation target
+  * Add changelog generation target
+  * Add init.d initialization scripts
+  * Make the package more Debian-compliant
+
+ -- Nick Douma <nick.douma@cyso.nl>  Tue, 08 Feb 2011 14:40:21 +0100
+
 dnssnarf (1.0) unstable; urgency=low
 
   * Initial Release.

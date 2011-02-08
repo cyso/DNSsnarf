@@ -1,6 +1,6 @@
 The Debian Package dnssnarf
 ----------------------------
 
-Comments regarding the Package
+DNSsnarf, a DNS statistics gatherer for use with any DNS daemon.
 
  -- Cyso Development <development@cyso.nl>  Mon, 07 Feb 2011 16:48:13 +0100
