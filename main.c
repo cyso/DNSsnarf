@@ -442,6 +442,7 @@ int main(int argc, char *argv[]) {
 	closelog();
 
 	signal(SIGINT , exit_handler);
+	signal(SIGTERM , exit_handler);
 	signal(SIGKILL, exit_handler);
 
 	dev = pcap_lookupdev(errbuf);

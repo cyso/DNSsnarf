@@ -2,13 +2,13 @@ Source: dnssnarf
 Section: net
 Priority: extra
 Maintainer: Cyso Development <development@cyso.nl>
-Build-Depends: debhelper (>= 7), libpcap0.8-dev (>= 0.9.8), libcap2-bin (>= 2.11), fakeroot (>= 1.11)
+Build-Depends: debhelper (>= 7), libpcap0.8-dev (>= 0.9.8), libcap2-bin (>= 2.11), fakeroot (>= 1.11), bash (>= 3)
 Standards-Version: 3.7.3
 Homepage: 
 
 Package: dnssnarf
 Architecture: any
-Depends: ${shlibs:Depends}, libcap2-bin (>= 2.11), lsb-base (>= 3.0-6)
+Depends: ${shlibs:Depends}, libcap2-bin (>= 2.11), lsb-base (>= 3.0-6), bash (>= 3)
 Description: Gathers DNS statistics by snarfing packets
  Counts all incoming (queries) and outgoing (answers) UDP DNS packets, and 
  groups them by DNS record type:

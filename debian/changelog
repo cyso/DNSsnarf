@@ -1,9 +1,5 @@
 dnssnarf (1.1) stable; urgency=low
 
-  git-buildpackage.
-
-  ** SNAPSHOT build @2b219884ac334dcf8d85762bb028596016d19bde **
-
   [ peter ]
   * Add some DNS record type defines
   * Moved some helper routines to separate sourcefile
@@ -41,14 +37,15 @@ dnssnarf (1.1) stable; urgency=low
   * Fix Makefile to use $CFLAGS and add libcap2-bin dependency
   * Add package building target
   * Add changelog generation target
-  * Add changelog generation target
   * Add init.d initialization scripts
-  * Make the package more Debian-compliant
 
   [ peter ]
   * Fix stupid client warnings
   * Implemented basic syslog logging (to daemon facility) and added a
     SIGINT/SIGKILL handler
+
+  [ Nick Douma ]
+  * Make the package more Debian-compliant
 
   [ peter ]
   * Add proccess forking
@@ -59,8 +56,10 @@ dnssnarf (1.1) stable; urgency=low
   * Exclude .git directory from source package and remove example files
   * Lower init.d timeout on stop
   * Add man-pages and use fakeroot for package building
+  * Add bash dependency to fix compatability on Ubuntu and add SIGTERM
+    handling
 
- -- Nick Douma <nick.douma@cyso.nl>  Tue, 08 Feb 2011 17:06:11 +0100
+ -- Nick Douma <nick.douma@cyso.nl>  Wed, 09 Feb 2011 14:57:53 +0100
 
 dnssnarf (1.0) unstable; urgency=low
 
