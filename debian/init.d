@@ -15,7 +15,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="DNSsnarf DNS statistics gatherer"
 NAME=dnssnarf
 DAEMON=/usr/bin/$NAME
-DAEMON_ARGS="-d"
+DAEMON_ARGS=""
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
@@ -37,6 +37,16 @@ if [ $EUID -ne 0 ]; then
 	echo -n $DESC
 	echo ": could not start, must be run as root" 1>&2
 	exit 2
+fi
+
+if [ $ENABLED -ne 1 ]; then
+	echo -n $DESC
+	echo ": not enabled. Check /etc/default/$NAME" 1>&2
+	exit 2
+fi
+
+if [ "${INTERFACE}x" != "x" ]; then
+	DAEMON_ARGS="$DAEMON_ARGS -i $INTERFACE"
 fi
 
 #
