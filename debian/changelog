@@ -1,3 +1,24 @@
+dnssnarf (1.2~1.gbp3f01e0) UNRELEASED; urgency=low
+
+  ** SNAPSHOT build @3f01e09bcc965922c7f7c9cd90e154b65224ad1d **
+
+  [ Nick Douma ]
+  * Add bash dependency to fix compatability on Ubuntu and add SIGTERM
+    handling
+  * Add default config file for interface selection and auto-start
+    disabling
+  * Updated license and man pages
+
+  [ peter ]
+  * Add client commandline options as already specified in manpage
+  * Hard work on recordtype names, everything should be in there now
+  * Make client traverse all recordnames when checking validity
+
+  [ Nick Douma ]
+  * Add valid record types to dnssnarfclient man page
+
+ -- Nick Douma <chaos@lk-ws11-debian.office.cyso.net>  Wed, 09 Feb 2011 17:26:29 +0100
+
 dnssnarf (1.1) stable; urgency=low
 
   [ peter ]
