@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// check recordtype validity
-	for(i = 0; i < 0x30; i++) {
+	for(i = 0; i < 255; i++) {
 		if (dns_record_type_name[i] == NULL)
 			continue;
 
