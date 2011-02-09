@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/env bash
 ### BEGIN INIT INFO
 # Provides:          dnssnarf
 # Required-Start:    $remote_fs
@@ -15,7 +15,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="DNSsnarf DNS statistics gatherer"
 NAME=dnssnarf
 DAEMON=/usr/bin/$NAME
-DAEMON_ARGS="-d"
+DAEMON_ARGS=""
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
@@ -33,10 +33,20 @@ SCRIPTNAME=/etc/init.d/$NAME
 . /lib/lsb/init-functions
 
 # Check if user is root
-if [[ $EUID -ne 0 ]]; then
+if [ $EUID -ne 0 ]; then
 	echo -n $DESC
 	echo ": could not start, must be run as root" 1>&2
 	exit 2
+fi
+
+if [ $ENABLED -ne 1 ]; then
+	echo -n $DESC
+	echo ": not enabled. Check /etc/default/$NAME" 1>&2
+	exit 2
+fi
+
+if [ "${INTERFACE}x" != "x" ]; then
+	DAEMON_ARGS="$DAEMON_ARGS -i $INTERFACE"
 fi
 
 #
@@ -50,7 +60,7 @@ do_start()
 	#   2 if daemon could not be started
 	start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON --test > /dev/null \
 		|| return 1
-	start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON -b -- \
+	start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON -- \
 		$DAEMON_ARGS \
 		|| return 2
 	# Add code here, if necessary, that waits for the process to be ready

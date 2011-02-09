@@ -1,0 +1,13 @@
+# Defaults for blaargh initscript
+# sourced by /etc/init.d/blaargh
+# installed at /etc/default/blaargh by the maintainer scripts
+
+#
+# This is a POSIX shell fragment
+#
+
+# Enable DNSsnarf.
+ENABLED=1
+
+# Interface to start DNSsnarf on. Leave empty to use default.
+INTERFACE=
