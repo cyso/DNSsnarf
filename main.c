@@ -413,7 +413,7 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 
 int main(int argc, char *argv[]) {
 	pcap_t *pcap_handle;
-	char   *dev;
+	char   *dev = NULL;
 	char   errbuf[PCAP_ERRBUF_SIZE];
 	struct bpf_program fp;
 
@@ -425,10 +425,14 @@ int main(int argc, char *argv[]) {
 	
 	char filter_exp[] = "udp port 53";
 
-	while((c = getopt(argc, argv, "f")) != -1) {
+	while((c = getopt(argc, argv, "fi:")) != -1) {
 		switch(c) {
 			case 'f':
 				daemon_mode = 1;
+			break;
+
+			case 'i':
+				dev = optarg;
 			break;
 
 			default:
@@ -454,19 +458,17 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	openlog("dnssnarf", LOG_PERROR, LOG_DAEMON);
-	syslog(LOG_INFO, "started.");
-	closelog();
-
 	signal(SIGINT , exit_handler);
 	signal(SIGKILL, exit_handler);
 	signal(SIGTERM, exit_handler);
 
-	dev = pcap_lookupdev(errbuf);
-
 	if (dev == NULL) {
-		fprintf(stderr, "Couldnt find default device: %s\n", errbuf);
-		return -1;
+		dev = pcap_lookupdev(errbuf);
+
+		if (dev == NULL) {
+			fprintf(stderr, "Couldnt find default device: %s\n", errbuf);
+			return -1;
+		}
 	}
 
 	if (pcap_lookupnet(dev, &net, &mask, errbuf) == -1) {
@@ -505,6 +507,10 @@ int main(int argc, char *argv[]) {
 	}
 
 	init_counters();
+
+	openlog("dnssnarf", LOG_PERROR, LOG_DAEMON);
+	syslog(LOG_INFO, "started.");
+	closelog();
 
 	pcap_loop(pcap_handle, -1, handle_packet, NULL);
 	pcap_close(pcap_handle);
