@@ -30,7 +30,9 @@ report statistics about DNS record types, and how many times a request has been 
 and processed for a specific type since the start of the dnssnarf daemon.
 .TP
 .B -r RECORDTYPE
-Type of DNS record to receive statistics for. Can be any of:
+Type of DNS record to receive statistics for. Can be any of: A, AAAA, CNAME, MB, MD, MF, MG, MR, MX, NAPTR, NS, PTR, RP, SOA, SPF, SRV, SSHFP, TX. Use
+.B all
+to sum up all record types.
 .TP
 .B -q
 Count of incoming packets.
