@@ -410,6 +410,15 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 #endif
 }
 
+void usage(char *prog) {
+	fprintf(
+		stderr,
+		"\nUsage: %s [options]\n\n"
+		"Available Options:\n"
+		"  -f : Foreground mode\n"
+		"  -i : Device selection (-i eth9)\n\n", prog
+	);
+}
 
 int main(int argc, char *argv[]) {
 	pcap_t *pcap_handle;
@@ -436,7 +445,7 @@ int main(int argc, char *argv[]) {
 			break;
 
 			default:
-				fprintf(stderr, "Unknown commandline option: '%c'\n", c);
+				usage(argv[0]);
 				exit(-1);
 			break;
 		}
