@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH DNSSNARF 1 "February  8, 2011"
+.TH DNSSNARF 1 "February 10, 2011"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -19,13 +19,22 @@
 dnssnarf \- a DNS statistics gatherer for use with any DNS daemon.
 .SH SYNOPSIS
 .B dnssnarf
+[-f] [-i INTERFACE]
 .SH DESCRIPTION
-This manual page documents briefly the
+This manual page documents briefly describes the
 .B dnssnarf
 daemon.
 .PP
 The dnssnarf daemon should be started and stopped via its init.d script, which is automatically installed by the package.
-Upon starting, the daemon will immediately fork itself and run into the background. 
+Configuration options are specified in
+.B /etc/default/dnssnarf.
+By default upon starting, the daemon will immediately fork itself and run into the background.
+.TP
+.B -f
+Runs DNSsnarf in the foreground.
+.TP
+.B -i INTERFACE
+Run DNSsnarf on the specified interface, instead of the system default.
 .PP
 Use the 
 .B dnssnarfclient
@@ -36,4 +45,4 @@ tool to retrieve the statistics that dnssnarf gathers.
 .SH AUTHOR
 dnssnarf was written by Peter Geissler <peter.geissler@cyso.nl> and Nick Douma <nick.douma@cyso.nl>
 .PP
-This manual page was written by Nick Douma <nick.douma@cyso.nl> for the Debian project (but may be used by others).
+This manual page was written by Nick Douma <nick.douma@cyso.nl> for Cyso Managed Hosting, all rights reserved.

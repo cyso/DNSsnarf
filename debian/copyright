@@ -12,15 +12,7 @@ Copyright:
 
 License:
 
-    This program is free software; you can redistribute it and/or modify it
-    under the terms of the "Artistic License" which comes with Debian.
+    All rights reserved.
 
-    THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
-    WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES
-    OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
-On Debian systems, the complete text of the Artistic License
-can be found in `/usr/share/common-licenses/Artistic'.
-
-The Debian packaging is (C) 2011, Cyso Development <development@cyso.nl> and
-is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
+The Debian packaging is (c) 2011, Cyso Development <development@cyso.nl> and
+is property of Cyso Managed Hosting.
