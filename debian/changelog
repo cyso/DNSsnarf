@@ -1,6 +1,4 @@
-dnssnarf (1.2~1.gbp3f01e0) UNRELEASED; urgency=low
-
-  ** SNAPSHOT build @3f01e09bcc965922c7f7c9cd90e154b65224ad1d **
+dnssnarf (1.2) stable; urgency=low
 
   [ Nick Douma ]
   * Add bash dependency to fix compatability on Ubuntu and add SIGTERM
@@ -16,8 +14,10 @@ dnssnarf (1.2~1.gbp3f01e0) UNRELEASED; urgency=low
 
   [ Nick Douma ]
   * Add valid record types to dnssnarfclient man page
+  * Updated changelog
+  * Add license information to all relevant file, in prepartion of GitHub release
 
- -- Nick Douma <chaos@lk-ws11-debian.office.cyso.net>  Wed, 09 Feb 2011 17:26:29 +0100
+ -- Nick Douma <nick.douma@cyso.nl>  Tue, 11 Oct 2011 15:53:03 +0200
 
 dnssnarf (1.1) stable; urgency=low
 
