@@ -34,8 +34,6 @@
 #include "helper.h"
 #include "shm.h"
 
-#define	STATEFILE "/var/spool/dnssnarf/state.bin"
-
 int shmid;
 char *shm = NULL;
 
@@ -43,6 +41,8 @@ uint64_t *qcounter;
 uint64_t *acounter;
 
 void save_counters();
+
+char *statefile = "state.bin";
 
 #ifdef DEBUG
 	#define DPRINTF(s)  do { printf s; } while (0)
@@ -68,13 +68,13 @@ void init_counters() {
 	qcounter = (uint64_t*)shm;
 	acounter = qcounter + 256;
 
-	if (stat(STATEFILE, &st) == -1) {
+	if (stat(statefile, &st) == -1) {
 		for(i = 0; i < 256; i++) {
 			qcounter[i] = 0;
 			acounter[i] = 0;
 		}
 	} else {
-		fp = fopen(STATEFILE, "rb");
+		fp = fopen(statefile, "rb");
 		fread(shm, SHM_SIZE, 1, fp);
 		fclose(fp);
 	}
@@ -83,7 +83,7 @@ void init_counters() {
 void save_counters() {
 	FILE *fp;
 
-	fp = fopen(STATEFILE, "wb");
+	fp = fopen(statefile, "wb");
 	fwrite(shm, SHM_SIZE, 1, fp);
 	fclose(fp);
 }
@@ -451,7 +451,8 @@ void usage(char *prog) {
 		"\nUsage: %s [options]\n\n"
 		"Available Options:\n"
 		"  -f : Foreground mode\n"
-		"  -i : Device selection (-i eth9)\n\n", prog
+		"  -i : Device selection (-i eth9)\n"
+		"  -s : State file location (-s /path/to/state.bin)\n\n", prog
 	);
 }
 
@@ -469,7 +470,7 @@ int main(int argc, char *argv[]) {
 	
 	char filter_exp[] = "udp port 53";
 
-	while((c = getopt(argc, argv, "fi:")) != -1) {
+	while((c = getopt(argc, argv, "fi:s:")) != -1) {
 		switch(c) {
 			case 'f':
 				daemon_mode = 1;
@@ -477,6 +478,10 @@ int main(int argc, char *argv[]) {
 
 			case 'i':
 				dev = optarg;
+			break;
+
+			case 's':
+				statefile = optarg;
 			break;
 
 			default:

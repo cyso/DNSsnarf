@@ -10,7 +10,6 @@
 
 # Author: Nick Douma <nick.douma@cyso.nl>
 
-# PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="DNSsnarf DNS statistics gatherer"
 NAME=dnssnarf
@@ -47,6 +46,10 @@ fi
 
 if [ "${INTERFACE}x" != "x" ]; then
 	DAEMON_ARGS="$DAEMON_ARGS -i $INTERFACE"
+fi
+
+if [ "${STATEFILE}x" != "x" ]; then
+	DAEMON_ARGS="$DAEMON_ARGS -s $STATEFILE"
 fi
 
 #

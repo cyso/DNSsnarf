@@ -11,3 +11,6 @@ ENABLED=1
 
 # Interface to start DNSsnarf on. Leave empty to use default.
 INTERFACE=
+
+# Location of statefile
+STATEFILE=/var/spool/dnssnarf/state.bin

@@ -19,7 +19,7 @@
 dnssnarf \- a DNS statistics gatherer for use with any DNS daemon.
 .SH SYNOPSIS
 .B dnssnarf
-[-f] [-i INTERFACE]
+[-f] [-i INTERFACE] [-s STATEFILE]
 .SH DESCRIPTION
 This manual page documents briefly describes the
 .B dnssnarf
@@ -35,6 +35,9 @@ Runs DNSsnarf in the foreground.
 .TP
 .B -i INTERFACE
 Run DNSsnarf on the specified interface, instead of the system default.
+.TP
+.B -s STATEFILE
+Specify a path for the state file of DNSSnarf. (default location is ./state.bin)
 .PP
 Use the 
 .B dnssnarfclient
