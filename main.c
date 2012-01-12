@@ -122,7 +122,6 @@ int extract_name(u8 *b, u8 *p, char *out) {
 			return k+2;
 		}
 
-
 		if (k != 0)
 			*out++ = '.';
 
@@ -135,7 +134,6 @@ int extract_name(u8 *b, u8 *p, char *out) {
 	}
 
 	*out = 0;
-
 	return k+1;
 }
 
@@ -186,7 +184,6 @@ int handle_question_entry(u8 *q, u8 *p) {
 	}
 
 	DPRINTF(("  `-- QUESTION   : [%5s] (%d) '%s' qclass:%04x\n", dns_record_type_name[qtype], qtype, name, qclass));
-
 	return n;
 }
 
@@ -384,13 +381,6 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	dst_addr = be32(p+4);
 	udp_len  = be16(p+10);
 
-	/*
-	ipv4_to_ascii(src_addr, ip_buf);
-	printf("UDP src: %s\n", ip_buf);
-	ipv4_to_ascii(dst_addr, ip_buf);
-	printf("UDP dst: %s\n", ip_buf);
-	*/
-
 	p += 0x10;	
 
 	id      = be16(p+0);
@@ -399,6 +389,11 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	ancount = be16(p+6);
 	nscount = be16(p+8);
 	arcount = be16(p+10);
+
+	if (flags == 0x8403) {
+		DPRINTF(("INVALID NAME\n"));
+		return;
+	}
 
 	DPRINTF(("++ ID: %04x QR: %d OPCODE: %x QCOUNT: %d ANCOUNT: %d ARCOUNT: %d\n", id, 0, 0, qcount, ancount, arcount));
 
@@ -423,7 +418,7 @@ void handle_packet(u8 *args, const struct pcap_pkthdr *header, const u8 *packet)
 	DPRINTF(("\n"));
 
 #ifdef DEBUG
-	dump_counters();
+//	dump_counters();
 #endif
 }
 
