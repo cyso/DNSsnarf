@@ -24,6 +24,7 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/stat.h>
 #include <syslog.h>
 #include <signal.h>
 #include <unistd.h>
@@ -33,11 +34,15 @@
 #include "helper.h"
 #include "shm.h"
 
+#define	STATEFILE "/var/spool/dnssnarf/state.bin"
+
 int shmid;
 char *shm = NULL;
 
 uint64_t *qcounter;
 uint64_t *acounter;
+
+void save_counters();
 
 #ifdef DEBUG
 	#define DPRINTF(s)  do { printf s; } while (0)
@@ -46,6 +51,8 @@ uint64_t *acounter;
 #endif
 
 void exit_handler(int sig) {
+	save_counters();
+
 	openlog("dnssnarf", LOG_PERROR, LOG_DAEMON);
 	syslog(LOG_INFO, "killed by signal 0x%x.", sig);
 	closelog();
@@ -55,14 +62,30 @@ void exit_handler(int sig) {
 
 void init_counters() {
 	int i;
+	struct stat st;
+	FILE *fp;
 
 	qcounter = (uint64_t*)shm;
 	acounter = qcounter + 256;
 
-	for(i = 0; i < 256; i++) {
-		qcounter[i] = 0;
-		acounter[i] = 0;
+	if (stat(STATEFILE, &st) == -1) {
+		for(i = 0; i < 256; i++) {
+			qcounter[i] = 0;
+			acounter[i] = 0;
+		}
+	} else {
+		fp = fopen(STATEFILE, "rb");
+		fread(shm, SHM_SIZE, 1, fp);
+		fclose(fp);
 	}
+}
+
+void save_counters() {
+	FILE *fp;
+
+	fp = fopen(STATEFILE, "wb");
+	fwrite(shm, SHM_SIZE, 1, fp);
+	fclose(fp);
 }
 
 void dump_counters() {
@@ -481,7 +504,6 @@ int main(int argc, char *argv[]) {
 
 	signal(SIGINT , exit_handler);
 	signal(SIGTERM , exit_handler);
-	signal(SIGKILL, exit_handler);
 	signal(SIGTERM, exit_handler);
 
 	if (dev == NULL) {
