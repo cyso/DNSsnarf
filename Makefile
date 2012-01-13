@@ -9,7 +9,7 @@ CLIENT_OBJS = client.o
 CLIENT_OUTPUT = dnssnarfclient
 
 main: $(OBJS) $(CLIENT_OBJS)
-	gcc $(CFLAGS) -o $(OUTPUT) $(LIBS) $(OBJS)
+	gcc $(CFLAGS) -o $(OUTPUT) $(OBJS) $(LIBS) 
 	gcc $(CFLAGS) -o $(CLIENT_OUTPUT) $(CLIENT_OBJS)
 
 cap:
@@ -33,4 +33,4 @@ changelog:
 	git dch --debian-branch=master --snapshot --auto
 
 release:
-	git dch --debian-branch=master --release --auto -N 1.2.1
+	git dch --debian-branch=master --release --auto -N 1.2.2

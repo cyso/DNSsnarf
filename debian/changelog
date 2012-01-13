@@ -1,3 +1,9 @@
+dnssnarf (1.2.2) stable; urgency=low
+
+  * Bugfix: switch $LIBS and $OBJS in Makefile to avoid link errors. Bump version.
+
+ -- Nick Douma <nick.douma@cyso.nl>  Fri, 13 Jan 2012 14:13:32 +0100
+
 dnssnarf (1.2.1) stable; urgency=low
 
   [ peter ]
