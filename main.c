@@ -452,15 +452,19 @@ void usage(char *prog) {
 		"Available Options:\n"
 		"  -f : Foreground mode\n"
 		"  -i : Device selection (-i eth9)\n"
-		"  -s : State file location (-s /path/to/state.bin)\n\n", prog
+		"  -s : State file location (-s /path/to/state.bin)\n"
+		"  -p : PID file location (-p /var/run/dnssnarf.pid)\n\n", prog
 	);
 }
 
 int main(int argc, char *argv[]) {
 	pcap_t *pcap_handle;
 	char   *dev = NULL;
+	char   *pidfile = NULL;
 	char   errbuf[PCAP_ERRBUF_SIZE];
 	struct bpf_program fp;
+	char   pidstring[255];
+	FILE   *f;
 
 	int c, daemon_mode = 0;
 
@@ -470,7 +474,7 @@ int main(int argc, char *argv[]) {
 	
 	char filter_exp[] = "udp port 53";
 
-	while((c = getopt(argc, argv, "fi:s:")) != -1) {
+	while((c = getopt(argc, argv, "fi:s:p:")) != -1) {
 		switch(c) {
 			case 'f':
 				daemon_mode = 1;
@@ -482,6 +486,10 @@ int main(int argc, char *argv[]) {
 
 			case 's':
 				statefile = optarg;
+			break;
+
+			case 'p':
+				pidfile = optarg;
 			break;
 
 			default:
@@ -503,6 +511,18 @@ int main(int argc, char *argv[]) {
 		}
 
 		if (pid > 0) {
+			if (pidfile != NULL) {
+				f = fopen(pidfile, "w");
+				if (f == NULL) {
+					fprintf(stderr, "Could not open PID file! (%s)\n", pidfile);
+					exit(1);
+				}
+
+				sprintf(pidstring, "%d\n", pid);
+				fwrite(pidstring, strlen(pidstring), 1, f);
+				fclose(f);
+			}
+
 			exit(0);
 		}
 	}
