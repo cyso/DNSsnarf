@@ -1,3 +1,16 @@
+dnssnarf (1.2.1) stable; urgency=low
+
+  [ peter ]
+  * Fixed crashbug
+  * Preserve counter state when DNSsnarf exits or restarts
+  * Added statefile option to DNSsnarf, updated init.d scripts, manpage etc.
+  * Added PID file parameter
+
+  [ Nick Douma ]
+  * Document new PIDfile switch and add it to init.d script.
+
+ -- Nick Douma <nick.douma@cyso.nl>  Fri, 13 Jan 2012 14:10:36 +0100
+
 dnssnarf (1.2) stable; urgency=low
 
   [ Nick Douma ]

@@ -52,6 +52,10 @@ if [ "${STATEFILE}x" != "x" ]; then
 	DAEMON_ARGS="$DAEMON_ARGS -s $STATEFILE"
 fi
 
+if [ "${PIDFILE}x" != "x" ]; then
+	DAEMON_ARGS="$DAEMON_ARGS -p $PIDFILE"
+fi
+
 #
 # Function that starts the daemon/service
 #
