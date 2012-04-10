@@ -1,3 +1,5 @@
+![DNSSnarf Logo](http://github.com/Cysource/DNSSnarf/raw/master/logo/dnssnarf.png)
+
 Description
 ===========
 
