@@ -546,7 +546,7 @@ int main(int argc, char *argv[]) {
 		mask = 0;
 	}
 
-	pcap_handle = pcap_open_live(dev, BUFSIZ, 1, 1000, errbuf);
+	pcap_handle = pcap_open_live(dev, BUFSIZ, 0, 1000, errbuf);
 
 	if (pcap_handle == NULL) {
 		fprintf(stderr, "Couldnt open device %s: %s\n", dev, errbuf);
