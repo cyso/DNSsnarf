@@ -1,3 +1,18 @@
+dnssnarf (1.2.3) stable; urgency=low
+
+  [ Tristan Reemer ]
+  * Added new logo in AI and transparent PNG format.
+  * Added logo to readme file.
+  * Changed dimensions of the logo.
+
+  [ peter ]
+  * Dont put device in promiscious mode
+
+  [ Nick Douma ]
+  * Bump version number
+
+ -- Nick Douma <chaos@lk-ws11-ubuntu.office.cyso.net>  Tue, 22 May 2012 15:13:13 +0200
+
 dnssnarf (1.2.2) stable; urgency=low
 
   * Bugfix: switch $LIBS and $OBJS in Makefile to avoid link errors. Bump version.

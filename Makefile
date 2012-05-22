@@ -33,4 +33,4 @@ changelog:
 	git dch --debian-branch=master --snapshot --auto
 
 release:
-	git dch --debian-branch=master --release --auto -N 1.2.2
+	git dch --debian-branch=master --release --auto -N 1.2.3
